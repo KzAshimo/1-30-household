@@ -17,6 +17,10 @@ return new class extends Migration
             $table->bigInteger('log_id')->unsigned()->index();
             $table->bigInteger('user_id')->unsigned()->index();
             $table->timestamps();
+            //外部キー結合
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('log_id')->references('id')->on('expenditure_log')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('expenditure_category')->onDelete('cascade');
         });
     }
 
