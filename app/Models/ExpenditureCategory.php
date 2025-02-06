@@ -7,14 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExpenditureCategory extends Model
 {
-    use HasFactory;
-
     protected $table = 'expenditure_category';
-    protected $fillable = ['title'];
+    protected $fillable = ['title','user_id'];
 
     public function user()
     {
-        //Userクラスと１対多（多）
+        //Userクラスと1対多（多）
         return $this->belongsTo(User::class);
     }
 }
