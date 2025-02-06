@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ExpenditureCategoryRequest;
 use Illuminate\Http\Request;
 use App\Models\ExpenditureCategory;
 use Illuminate\Support\Facades\Auth;
@@ -21,17 +22,10 @@ class ExpenditureCategoryController extends Controller
      * Store a newly created resource in storage.
      */
     //支出カテゴリ登録----------------------------
-    public function store(Request $request)
+    public function store(ExpenditureCategoryRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|unique:expenditure_category,title',
-        ]);
 
-        $category = ExpenditureCategory::create([
-            'title' => $request->title,
-            'user_id' => Auth::id(),
-        ]);
-
+        $category = ExpenditureCategory::create($request->validated());
         return response()->json($category, 201);
     }
 
