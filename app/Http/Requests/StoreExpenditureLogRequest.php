@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreExpenditureLogRequest extends FormRequest
@@ -25,7 +26,7 @@ class StoreExpenditureLogRequest extends FormRequest
             'name' => 'required|string|max:25',
             'test' => 'nullable|string',
             'price' => 'required|integer|min:0',
-            'category_id' => 'required|exist:expenditure_category,id',
+            'category_id' => 'required|exists:expenditure_category,id',
         ];
     }
 }

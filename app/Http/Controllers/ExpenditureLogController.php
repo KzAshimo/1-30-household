@@ -6,8 +6,9 @@ use App\Http\Requests\StoreExpenditureLogRequest;
 use App\Http\Requests\UpdateExpenditureLogRequest;
 use App\Models\ExpenditureLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ExpenditureController extends Controller
+class ExpenditureLogController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,8 +24,19 @@ class ExpenditureController extends Controller
     //支出登録
     public function store(StoreExpenditureLogRequest $request)
     {
-        $log = ExpenditureLog::create($request->validated());
-        return response()->json($log,201);
+        $validated = $request->validated();
+
+        $log = ExpenditureLog::create([
+            'name' => $validated['name'],
+            'text' => $validated['text'],
+            'price' => $validated['price'],
+            'category_id' => $validated['category_id'],
+            'user_id' => Auth::id(),
+        ]);
+
+        $log->categories()->attach($validated['log_id' => $validated->id],['category_id'],['user_id' => Auth::id()]);
+
+        return response()->json($log, 201);
     }
 
     /**
