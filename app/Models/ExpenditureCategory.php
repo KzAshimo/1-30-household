@@ -12,16 +12,15 @@ class ExpenditureCategory extends Model
     protected $table = 'expenditure_category';
     protected $fillable = ['title', 'user_id'];
 
-    //ユーザークラスとリレーション
+    //ユーザーとリレーション(子、複数)
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
-    //支出記録とリレーション(中間テーブル使用)
-    public function log()
+    //支出ログとリレーション(親)
+    public function logs()
     {
-        return $this->belongsToMany(ExpenditureLog::class, 'ex_category_log', 'category_id', 'log_id')
-            ->withPivot('user_id')->withTimestamps();
+        return $this->hasMany(ExpenditureLog::class,'category_id');
     }
 }

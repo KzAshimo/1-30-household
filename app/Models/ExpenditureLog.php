@@ -10,16 +10,15 @@ class ExpenditureLog extends Model
     protected $table = 'expenditure_log';
     protected $fillable = ['name', 'text', 'price', 'category_id'];
 
-    //ユーザーとリレーション
+    //ユーザーとリレーション(子、複数)
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
-    //カテゴリーとリレーション(中間テーブル使用)
+    //支出カテゴリーとリレーション(子、複数)
     public function category()
     {
-        return $this->belongsToMany(ExpenditureCategory::class, 'ex_category_log', 'category_id', 'log_id',)
-            ->withPivot('user_id')->withTimestamps();
+        return $this->belongsTo(ExpenditureCategory::class,'category_id');
     }
 }

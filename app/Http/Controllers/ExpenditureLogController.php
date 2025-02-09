@@ -34,8 +34,6 @@ class ExpenditureLogController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        $log->categories()->attach($validated['log_id' => $validated->id],['category_id'],['user_id' => Auth::id()]);
-
         return response()->json($log, 201);
     }
 
