@@ -11,13 +11,13 @@ class ExpenditureLog extends Model
     protected $fillable = ['name', 'text', 'price', 'category_id'];
 
     //ユーザーとリレーション(子、複数)
-    public function user()
+    public function users()
     {
         return $this->belongsTo(User::class,'user_id');
     }
 
     //支出カテゴリーとリレーション(子、複数)
-    public function category()
+    public function categories()
     {
         return $this->belongsTo(ExpenditureCategory::class,'category_id');
     }

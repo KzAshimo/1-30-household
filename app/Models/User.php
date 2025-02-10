@@ -47,14 +47,26 @@ class User extends Authenticatable
     }
 
     //支出カテゴリとリレーション(親)
-    public function categories()
+    public function ex_categories()
     {
         return $this->hasMany(ExpenditureCategory::class,'user_id');
     }
 
     //支出ログとリレーション(親)
-    public function logs()
+    public function ex_logs()
     {
         return $this->hasMany(ExpenditureLog::class,'user_id');
+    }
+
+    //支出カテゴリとリレーション(親)
+    public function in_categories()
+    {
+        return $this->hasMany(IncomeCategory::class,'user_id');
+    }
+
+    //支出ログとリレーション(親)
+    public function in_logs()
+    {
+        return $this->hasMany(IncomeLog::class,'user_id');
     }
 }

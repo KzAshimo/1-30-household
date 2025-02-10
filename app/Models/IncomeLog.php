@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ExpenditureCategory extends Model
+class IncomeLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'expenditure_category';
-    protected $fillable = ['title', 'user_id'];
+    protected $table = 'income_log';
+    protected $fillable = ['name','text','price','category_id'];
 
     //ユーザとリレーション(子、複数)
     public function users()
@@ -18,9 +18,9 @@ class ExpenditureCategory extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
-    //支出ログとリレーション(親)
-    public function logs()
+    //カテゴリとリレーション(親)
+    public function categories()
     {
-        return $this->hasMany(ExpenditureLog::class,'category_id');
+        return $this->hasMany(IncomeCategory::class,'category_log');
     }
 }
