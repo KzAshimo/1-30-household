@@ -24,5 +24,5 @@ use App\Models\ExpenditureLog;
     Route::delete('/in-categories/{id}',[IncomeCategoryController::class,'destroy']);
     //収入ログ
     Route::post('/in-logs',[IncomeLogController::class,'store']);
-    Route::put('/in-logs',[IncomeLogController::class,'update']);
+    Route::put('/in-logs/{id}',[IncomeLogController::class,'update']);
     Route::delete('/in-logs/{id}',[IncomeLogController::class,'destroy']);
