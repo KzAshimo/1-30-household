@@ -1,3 +1,4 @@
+import ExList from "@/Expenditure/ExList";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -20,6 +21,7 @@ export default function AdminDashboard() {
                             <div className="p-6 text-gray-900">
                                 You're logged in!
                             </div>
+                            <ExList/>
                         </div>
                     </div>
                 </div>

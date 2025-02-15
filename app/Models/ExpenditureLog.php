@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExpenditureLog extends Model
 {
+    use HasFactory;
+
     protected $table = 'expenditure_log';
-    protected $fillable = ['name', 'text', 'price', 'category_id'];
+    protected $fillable = ['name', 'text', 'price', 'category_id','user_id'];
 
     //ユーザーとリレーション(子、複数)
     public function users()

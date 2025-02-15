@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExpenditureLogRequest;
 use App\Http\Requests\UpdateExpenditureLogRequest;
+use App\Models\ExpenditureCategory;
 use App\Models\ExpenditureLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class ExpenditureLogController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(ExpenditureLog::all(), 200);
     }
 
     /**
@@ -26,7 +27,7 @@ class ExpenditureLogController extends Controller
     {
         $validated = $request->validated();
 
-        $log = ExpenditureLog::create([
+        $logs = ExpenditureLog::create([
             'name' => $validated['name'],
             'text' => $validated['text'],
             'price' => $validated['price'],
@@ -34,7 +35,7 @@ class ExpenditureLogController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return response()->json($log, 201);
+        return response()->json($logs, 201);
     }
 
     /**

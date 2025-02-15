@@ -14,7 +14,7 @@ class IncomeLogController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(IncomeLog::all(), 200);
     }
 
     /**

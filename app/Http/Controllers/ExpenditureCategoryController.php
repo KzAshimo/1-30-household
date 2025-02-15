@@ -6,6 +6,7 @@ use App\Http\Requests\ExpenditureCategoryRequest;
 use Illuminate\Http\Request;
 use App\Models\ExpenditureCategory;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ExpenditureCategoryController extends Controller
 {
@@ -51,12 +52,11 @@ class ExpenditureCategoryController extends Controller
     //支出カテゴリ削除------------------------------
     public function destroy(string $id)
     {
-        //対象カテゴリをidで検索
         $category = ExpenditureCategory::find($id);
+        log::info([Auth::id()]);
 
-        //カテゴリーが存在しない or 登録したユーザー以外がリクエストした場合
-        if($category || $category->user_id !== Auth::id()){
-            return response()->json(['message' => 'Not Found'], 404);
+        if (!$category) {
+            return response()->json(['message' => 'ex-category not found', 404]);
         }
 
         $category->delete();

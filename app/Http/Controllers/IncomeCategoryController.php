@@ -49,11 +49,12 @@ class IncomeCategoryController extends Controller
     {
         $category = IncomeCategory::find($id);
 
-        if(!$category || $category->user_id !== Auth::id()){
-            return response()->json(['message' => 'Not Found'], 404);
+        if(!$category){
+            return response()->json(['in-message' => 'category not found', 404]);
         }
 
+
         $category->delete();
-        return response()->json(['message' => 'Deleted'], 200);
+        return response()->json(['message' => 'deleted'], 200);
     }
 }
