@@ -14,6 +14,7 @@ type Logs = {
     category_id: number;
     price: number;
     user_id: number;
+    created_at: Date;
 };
 
 const IncomeList = () => {
@@ -89,8 +90,22 @@ const IncomeList = () => {
             if (!response.ok) {
                 throw new Error("収入記録取得エラー");
             }
-            setLogs(await response.json());
-            console.log(logs);
+            const data: Logs[] = await response.json();
+            console.log(data);
+
+            //今月のデータをフィルタリング
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            const filterLogs = data.filter((log) => {
+                const logDate = new Date(log.created_at);
+                return (
+                    logDate.getFullYear() === currentYear &&
+                    logDate.getMonth() === currentMonth
+                );
+            });
+            setLogs(filterLogs);
         } catch (error) {
             console.error(error);
         }
@@ -139,7 +154,7 @@ const IncomeList = () => {
             {categories.map((category) => (
                 <div
                     key={category.id}
-                    className="bg-white shadow-md rounded-lg p-4 mb-6"
+                    className="bg-white shadow-md rounded-lg p-4 mb-3"
                 >
                     <h2 className="text-lg font-bold border-b pb-2 text-gray-800 mb-3">
                         {category.title}
@@ -164,6 +179,13 @@ const IncomeList = () => {
                                     className="bg-gray-200 p-4 rounded-lg shadow-sm"
                                 >
                                     <div className="flex justify-between items-center">
+                                        <p className="text-gray-800 font-medium">
+                                            {
+                                                new Date(log.created_at)
+                                                    .toISOString()
+                                                    .split("T")[0]
+                                            }
+                                        </p>
                                         <p className="text-gray-800 font-medium">
                                             {log.name}
                                         </p>

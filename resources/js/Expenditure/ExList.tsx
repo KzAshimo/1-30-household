@@ -13,12 +13,13 @@ type Logs = {
     price: number;
     user_id: number;
     category_id: number;
+    created_at: Date;
 };
+
 const ExList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
 
-    //初回レンダリングでindexメソッド読み込み
     useEffect(() => {
         indexExCategory();
         indexExLog();
@@ -42,7 +43,7 @@ const ExList = () => {
             console.error(error);
         }
     };
-    const storeExCategory = async (title:string) => {
+    const storeExCategory = async (title: string) => {
         try {
             const response = await fetch("/api/ex-categories", {
                 method: "POST",
@@ -64,8 +65,8 @@ const ExList = () => {
         try {
             const response = await fetch(`/api/ex-categories/${id}`, {
                 method: "DELETE",
-                headers:{
-                    "Content-Type":"application/json",
+                headers: {
+                    "Content-Type": "application/json",
                 },
                 credentials: "include",
             });
@@ -91,13 +92,27 @@ const ExList = () => {
             if (!response.ok) {
                 throw new Error("支出記録取得エラー");
             }
-            setLogs(await response.json());
-            console.log(logs);
+            const data: Logs[] = await response.json();
+            console.log(data);
+
+            //今月のデータをフィルタリング
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            const filterLogs = data.filter((log) => {
+                const logDate = new Date(log.created_at);
+                return (
+                    logDate.getFullYear() === currentYear &&
+                    logDate.getMonth() === currentMonth
+                );
+            });
+            setLogs(filterLogs);
         } catch (error) {
             console.error(error);
         }
     };
-    const storeExLog = async (log:Omit<Logs,"id">) => {
+    const storeExLog = async (log: Omit<Logs, "id">) => {
         try {
             const response = await fetch("/api/logs", {
                 method: "POST",
@@ -119,8 +134,8 @@ const ExList = () => {
         try {
             const response = await fetch(`/api/ex-logs/${id}`, {
                 method: "DELETE",
-                headers:{
-                    "Content-Type":"application/json",
+                headers: {
+                    "Content-Type": "application/json",
                 },
             });
             if (!response.ok) {
@@ -141,7 +156,7 @@ const ExList = () => {
             {categories.map((category) => (
                 <div
                     key={category.id}
-                    className="bg-white shadow-md rounded-lg p-4 mb-6"
+                    className="bg-white shadow-md rounded-lg p-4 mb-2"
                 >
                     <h2 className="text-lg font-bold border-b pb-2 text-gray-800 mb-3">
                         {category.title}
@@ -155,7 +170,7 @@ const ExList = () => {
                             </button>
                         </span>
                     </h2>
-                    <ul className="space-y-3">
+                    <ul className="space-y-1">
                         {logs
                             .filter((log) => log.category_id === category.id)
                             .map((log) => (
@@ -165,6 +180,13 @@ const ExList = () => {
                                 >
                                     <div className="flex justify-between items-center">
                                         <p className="text-gray-800 font-medium">
+                                            {
+                                                new Date(log.created_at)
+                                                    .toISOString()
+                                                    .split("T")[0]
+                                            }
+                                        </p>
+                                        <p className="text-gray-800 font-medium">
                                             {log.name}
                                         </p>
                                         <p className="text-gray-900 font-semibold">
@@ -173,10 +195,13 @@ const ExList = () => {
                                         <p className="text-gray-600 text-sm">
                                             {log.text}
                                         </p>
-                                    {/* ログ削除 */}
-                                    <button className="bg-red-500 text-white p-1 rounded-md"
-                                    onClick={() => deleteExLog(log.id)}>削除</button>
-
+                                        {/* ログ削除 */}
+                                        <button
+                                            className="bg-red-500 text-white p-1 rounded-md"
+                                            onClick={() => deleteExLog(log.id)}
+                                        >
+                                            削除
+                                        </button>
                                     </div>
                                 </li>
                             ))}
