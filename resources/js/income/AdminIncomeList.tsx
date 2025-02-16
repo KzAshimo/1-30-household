@@ -6,36 +6,37 @@ type Categories = {
     title: string;
     user_id: number;
 };
+
 type Logs = {
     id: number;
     name: string;
     text: string;
+    category_id: number;
     price: number;
     user_id: number;
-    category_id: number;
     created_at: Date;
 };
 
-const ExList = () => {
+const AdminIncomeList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
 
     useEffect(() => {
-        indexExCategory();
-        indexExLog();
+        indexIncomeCategory();
+        indexIncomeLog();
     }, []);
 
-    //ExCategory------------------------------------------------
-    const indexExCategory = async () => {
+    //IncomeCategory---------------------------------------
+    const indexIncomeCategory = async () => {
         try {
-            const response = await fetch("/api/ex-categories", {
+            const response = await fetch("/api/in-categories", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
             if (!response.ok) {
-                throw new Error("支出カテゴリ取得エラー");
+                throw new Error("収入カテゴリ取得エラー");
             }
             setCategories(await response.json());
             console.log(categories);
@@ -43,54 +44,51 @@ const ExList = () => {
             console.error(error);
         }
     };
-    const storeExCategory = async (title: string) => {
+    const storeIncomeCategory = async (title: string) => {
         try {
-            const response = await fetch("/api/ex-categories", {
+            const response = await fetch("/api/in-categories", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title }),
             });
             if (!response.ok) {
-                throw new Error("支出カテゴリ追加エラー");
+                throw new Error("収入カテゴリ追加エラー");
             }
-            indexExCategory();
+            indexIncomeLog();
         } catch (error) {
             console.error(error);
         }
     };
-    const deleteExCategory = async (id: number) => {
+    const deleteIncomeCategory = async (id: number) => {
         console.log(id);
-        console.log(`/api/ex-categories/${id}`);
-
         try {
-            const response = await fetch(`/api/ex-categories/${id}`, {
+            const response = await fetch(`/api/in-categories/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include",
+                credentials: "include", //auth sanctum
             });
             if (!response.ok) {
-                throw new Error("支出カテゴリ削除エラー");
+                throw new Error("収入カテゴリ削除エラー");
             }
             setCategories(categories.filter((category) => category.id !== id));
-            indexExCategory();
+            indexIncomeCategory();
         } catch (error) {
-            console.error(error);
+            console.error(Error);
         }
     };
-
-    //ExLog-----------------------------------------------
-    const indexExLog = async () => {
+    //IncomeLog----------------------------------------
+    const indexIncomeLog = async () => {
         try {
-            const response = await fetch("/api/ex-logs", {
+            const response = await fetch("/api/in-logs", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
             if (!response.ok) {
-                throw new Error("支出記録取得エラー");
+                throw new Error("収入記録取得エラー");
             }
             const data: Logs[] = await response.json();
             console.log(data);
@@ -112,9 +110,9 @@ const ExList = () => {
             console.error(error);
         }
     };
-    const storeExLog = async (log: Omit<Logs, "id">) => {
+    const storeIncomeLog = async (log: Omit<Logs, "id">) => {
         try {
-            const response = await fetch("/api/logs", {
+            const response = await fetch("/api/in-logs", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -122,27 +120,27 @@ const ExList = () => {
                 body: JSON.stringify({ log }),
             });
             if (!response.ok) {
-                throw new Error("支出追加エラー");
+                throw new Error("収入追加エラー");
             }
-            indexExLog();
+            indexIncomeLog();
         } catch (error) {
             console.error(error);
         }
     };
-    const deleteExLog = async (id: number) => {
+    const deleteIncomeLog = async (id: number) => {
         console.log(id);
         try {
-            const response = await fetch(`/api/ex-logs/${id}`, {
+            const response = await fetch(`/api/in-logs/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
             if (!response.ok) {
-                throw new Error("支出ログ削除エラー");
+                throw new Error("収入ログ削除エラー");
             }
             setLogs(logs.filter((log) => log.id !== id));
-            indexExLog();
+            indexIncomeLog();
         } catch (error) {
             console.error(error);
         }
@@ -150,13 +148,13 @@ const ExList = () => {
 
     return (
         <div className="max-w-2xl mx-auto p-4">
-            <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                支出カテゴリ
+            <h2 className="text-xl font-semibold leading-tight text-gray-800 underline mb-2">
+                収入
             </h2>
             {categories.map((category) => (
                 <div
                     key={category.id}
-                    className="bg-white shadow-md rounded-lg p-4 mb-2"
+                    className="bg-white shadow-md rounded-lg p-4 mb-3"
                 >
                     <h2 className="text-lg font-bold border-b pb-2 text-gray-800 mb-3">
                         {category.title}
@@ -164,13 +162,15 @@ const ExList = () => {
                             {/* カテゴリ削除 */}
                             <button
                                 className="bg-red-500 font-bold text-white mx-2 px-2 py-1 rounded-md"
-                                onClick={() => deleteExCategory(category.id)}
+                                onClick={() =>
+                                    deleteIncomeCategory(category.id)
+                                }
                             >
                                 削除
                             </button>
                         </span>
                     </h2>
-                    <ul className="space-y-1">
+                    <ul className="space-y-3">
                         {logs
                             .filter((log) => log.category_id === category.id)
                             .map((log) => (
@@ -198,7 +198,9 @@ const ExList = () => {
                                         {/* ログ削除 */}
                                         <button
                                             className="bg-red-500 text-white p-1 rounded-md"
-                                            onClick={() => deleteExLog(log.id)}
+                                            onClick={() =>
+                                                deleteIncomeLog(log.id)
+                                            }
                                         >
                                             削除
                                         </button>
@@ -211,4 +213,4 @@ const ExList = () => {
         </div>
     );
 };
-export default ExList;
+export default AdminIncomeList;

@@ -16,10 +16,10 @@ type Logs = {
     created_at: Date;
 };
 
-const ExList = () => {
+const AdminExList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
-
+    const [newCategory, setNewCategory] = useState<string>("");
     useEffect(() => {
         indexExCategory();
         indexExLog();
@@ -43,16 +43,19 @@ const ExList = () => {
             console.error(error);
         }
     };
-    const storeExCategory = async (title: string) => {
+    const storeExCategory = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("store",{newCategory});
         try {
             const response = await fetch("/api/ex-categories", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title }),
+                body: JSON.stringify({ title: newCategory}),
             });
             if (!response.ok) {
                 throw new Error("支出カテゴリ追加エラー");
             }
+            setNewCategory("");
             indexExCategory();
         } catch (error) {
             console.error(error);
@@ -150,9 +153,23 @@ const ExList = () => {
 
     return (
         <div className="max-w-2xl mx-auto p-4">
-            <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                支出カテゴリ
+            <h2 className="text-xl font-semibold leading-tight text-gray-800 underline mb-2">
+                支出
             </h2>
+            <form onSubmit={storeExCategory} className="mb-4 flex items-center">
+                <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="追加したいカテゴリを入力"
+                />
+                <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md"
+                >
+                    追加
+                </button>
+            </form>
             {categories.map((category) => (
                 <div
                     key={category.id}
@@ -211,4 +228,4 @@ const ExList = () => {
         </div>
     );
 };
-export default ExList;
+export default AdminExList;

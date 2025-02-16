@@ -26,7 +26,10 @@ class ExpenditureCategoryController extends Controller
     public function store(ExpenditureCategoryRequest $request)
     {
 
-        $category = ExpenditureCategory::create($request->validated());
+        $category = ExpenditureCategory::create([
+            'title' => $request->title,
+            'user_id' => auth()->id(),
+        ]);
         return response()->json($category, 201);
     }
 
@@ -53,7 +56,6 @@ class ExpenditureCategoryController extends Controller
     public function destroy(string $id)
     {
         $category = ExpenditureCategory::find($id);
-        log::info([Auth::id()]);
 
         if (!$category) {
             return response()->json(['message' => 'ex-category not found', 404]);
