@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../css/app.css";
+import { usePage } from "@inertiajs/react";
 
 type Categories = {
     id: number;
@@ -20,6 +21,21 @@ const AdminExList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
     const [newCategory, setNewCategory] = useState<string>("");
+
+    const [newLog, setNewLog] = useState<{
+        name: string;
+        text: string;
+        price: number;
+        category_id: number;
+    }>({
+        name: "",
+        text: "",
+        price: 0,
+        category_id: 0,
+    });
+
+    const user = usePage().props.auth.user;
+
     useEffect(() => {
         indexExCategory();
         indexExLog();
@@ -45,12 +61,12 @@ const AdminExList = () => {
     };
     const storeExCategory = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("store",{newCategory});
+        console.log("store", { newCategory });
         try {
             const response = await fetch("/api/ex-categories", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: newCategory}),
+                body: JSON.stringify({ title: newCategory, user_id: user.id }),
             });
             if (!response.ok) {
                 throw new Error("支出カテゴリ追加エラー");
@@ -115,18 +131,21 @@ const AdminExList = () => {
             console.error(error);
         }
     };
-    const storeExLog = async (log: Omit<Logs, "id">) => {
+    const storeExLog = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(newLog,user.id);
         try {
-            const response = await fetch("/api/logs", {
+            const response = await fetch("/api/ex-logs", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ log }),
+                body: JSON.stringify({ ...newLog, user_id: user.id }),
             });
             if (!response.ok) {
                 throw new Error("支出追加エラー");
             }
+            setNewLog({ name: "", text: "", price: 0, category_id: 0 });
             indexExLog();
         } catch (error) {
             console.error(error);
@@ -156,7 +175,8 @@ const AdminExList = () => {
             <h2 className="text-xl font-semibold leading-tight text-gray-800 underline mb-2">
                 支出
             </h2>
-            <form onSubmit={storeExCategory} className="mb-4 flex items-center">
+            {/* カテゴリフォーム */}
+            <form onSubmit={storeExCategory} className="mb-4 flex items-center border-solid border-2 p-2">
                 <input
                     type="text"
                     value={newCategory}
@@ -166,6 +186,55 @@ const AdminExList = () => {
                 <button
                     type="submit"
                     className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md"
+                >
+                    追加
+                </button>
+            </form>
+            {/* ログフォーム */}
+            <form onSubmit={storeExLog} className="mb-4 flex flex-col gap-2 border-solid border-2 p-2">
+                <input
+                    type="text"
+                    value={newLog.name}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, name: e.target.value })
+                    }
+                    placeholder="支出名"
+                />
+                <input
+                    type="text"
+                    value={newLog.text}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, text: e.target.value })
+                    }
+                    placeholder="説明"
+                />
+                <input
+                    type="number"
+                    value={newLog.price}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, price: Number(e.target.value) })
+                    }
+                    placeholder="金額"
+                />
+                <select
+                    value={newLog.category_id}
+                    onChange={(e) =>
+                        setNewLog({
+                            ...newLog,
+                            category_id: Number(e.target.value),
+                        })
+                    }
+                >
+                    <option value="">カテゴリを選択</option>
+                    {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                            {category.title}
+                        </option>
+                    ))}
+                </select>
+                <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                 >
                     追加
                 </button>

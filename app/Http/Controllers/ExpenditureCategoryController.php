@@ -28,7 +28,7 @@ class ExpenditureCategoryController extends Controller
 
         $category = ExpenditureCategory::create([
             'title' => $request->title,
-            'user_id' => auth()->id(),
+            'user_id' => $request->user_id,
         ]);
         return response()->json($category, 201);
     }

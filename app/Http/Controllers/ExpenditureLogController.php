@@ -25,14 +25,12 @@ class ExpenditureLogController extends Controller
     //支出登録
     public function store(StoreExpenditureLogRequest $request)
     {
-        $validated = $request->validated();
-
         $logs = ExpenditureLog::create([
-            'name' => $validated['name'],
-            'text' => $validated['text'],
-            'price' => $validated['price'],
-            'category_id' => $validated['category_id'],
-            'user_id' => Auth::id(),
+            'name' => $request['name'],
+            'text' => $request['text'],
+            'price' => $request['price'],
+            'category_id' => $request['category_id'],
+            'user_id' => $request['user_id'],
         ]);
 
         return response()->json($logs, 201);
