@@ -21,16 +21,15 @@ const AdminExList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
     const [newCategory, setNewCategory] = useState<string>("");
-
     const [newLog, setNewLog] = useState<{
         name: string;
         text: string;
-        price: number;
+        price: number | null;
         category_id: number;
     }>({
         name: "",
         text: "",
-        price: 0,
+        price: null,
         category_id: 0,
     });
 
@@ -87,7 +86,6 @@ const AdminExList = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include",
             });
             if (!response.ok) {
                 throw new Error("支出カテゴリ削除エラー");
@@ -133,7 +131,6 @@ const AdminExList = () => {
     };
     const storeExLog = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(newLog,user.id);
         try {
             const response = await fetch("/api/ex-logs", {
                 method: "POST",
@@ -176,29 +173,37 @@ const AdminExList = () => {
                 支出
             </h2>
             {/* カテゴリフォーム */}
-            <form onSubmit={storeExCategory} className="mb-4 flex items-center border-solid border-2 p-2">
+            <label className="">支出カテゴリ追加</label>
+            <form
+                onSubmit={storeExCategory}
+                className="mb-4 flex items-center border-solid border-2 p-2"
+            >
                 <input
                     type="text"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="追加したいカテゴリを入力"
+                    placeholder="追加支出カテゴリを入力"
                 />
                 <button
                     type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md"
+                    className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-teal-500"
                 >
                     追加
                 </button>
             </form>
             {/* ログフォーム */}
-            <form onSubmit={storeExLog} className="mb-4 flex flex-col gap-2 border-solid border-2 p-2">
+            <label className="">支出追加</label>
+            <form
+                onSubmit={storeExLog}
+                className="mb-4 flex flex-col gap-2 border-solid border-2 p-2"
+            >
                 <input
                     type="text"
                     value={newLog.name}
                     onChange={(e) =>
                         setNewLog({ ...newLog, name: e.target.value })
                     }
-                    placeholder="支出名"
+                    placeholder="支出名を入力"
                 />
                 <input
                     type="text"
@@ -206,15 +211,15 @@ const AdminExList = () => {
                     onChange={(e) =>
                         setNewLog({ ...newLog, text: e.target.value })
                     }
-                    placeholder="説明"
+                    placeholder="支出説明を入力"
                 />
                 <input
                     type="number"
-                    value={newLog.price}
+                    value={newLog.price ?? ""}
                     onChange={(e) =>
-                        setNewLog({ ...newLog, price: Number(e.target.value) })
+                        setNewLog({ ...newLog, price: e.target.value === "" ? null : Number(e.target.value) })
                     }
-                    placeholder="金額"
+                    placeholder="金額を入力"
                 />
                 <select
                     value={newLog.category_id}
@@ -234,7 +239,7 @@ const AdminExList = () => {
                 </select>
                 <button
                     type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-teal-500"
                 >
                     追加
                 </button>
@@ -249,7 +254,7 @@ const AdminExList = () => {
                         <span>
                             {/* カテゴリ削除 */}
                             <button
-                                className="bg-red-500 font-bold text-white mx-2 px-2 py-1 rounded-md"
+                                className="bg-red-500 font-bold text-white mx-2 px-2 py-1 rounded-md hover:bg-black"
                                 onClick={() => deleteExCategory(category.id)}
                             >
                                 削除
@@ -283,7 +288,7 @@ const AdminExList = () => {
                                         </p>
                                         {/* ログ削除 */}
                                         <button
-                                            className="bg-red-500 text-white p-1 rounded-md"
+                                            className="bg-red-500 text-white p-1 rounded-md hover:bg-black"
                                             onClick={() => deleteExLog(log.id)}
                                         >
                                             削除

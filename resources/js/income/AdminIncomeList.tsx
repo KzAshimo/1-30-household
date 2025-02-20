@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/app.css";
+import { usePage } from "@inertiajs/react";
+import { text } from "stream/consumers";
 
 type Categories = {
     id: number;
@@ -20,6 +22,20 @@ type Logs = {
 const AdminIncomeList = () => {
     const [categories, setCategories] = useState<Categories[]>([]);
     const [logs, setLogs] = useState<Logs[]>([]);
+    const [newCategory, setNewCategory] = useState<string>("");
+    const [newLog, setNewLog] = useState<{
+        name: string;
+        text: string;
+        price: number | null;
+        category_id: number;
+    }>({
+        name: "",
+        text: "",
+        price: null,
+        category_id: 0,
+    });
+
+    const user = usePage().props.auth.user;
 
     useEffect(() => {
         indexIncomeCategory();
@@ -44,16 +60,18 @@ const AdminIncomeList = () => {
             console.error(error);
         }
     };
-    const storeIncomeCategory = async (title: string) => {
+    const storeIncomeCategory = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
             const response = await fetch("/api/in-categories", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title }),
+                body: JSON.stringify({ title: newCategory, user_id: user.id }),
             });
             if (!response.ok) {
                 throw new Error("収入カテゴリ追加エラー");
             }
+            setNewCategory("");
             indexIncomeLog();
         } catch (error) {
             console.error(error);
@@ -67,7 +85,6 @@ const AdminIncomeList = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include", //auth sanctum
             });
             if (!response.ok) {
                 throw new Error("収入カテゴリ削除エラー");
@@ -110,18 +127,20 @@ const AdminIncomeList = () => {
             console.error(error);
         }
     };
-    const storeIncomeLog = async (log: Omit<Logs, "id">) => {
+    const storeIncomeLog = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
             const response = await fetch("/api/in-logs", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ log }),
+                body: JSON.stringify({ ...newLog, user_id: user.id }),
             });
             if (!response.ok) {
                 throw new Error("収入追加エラー");
             }
+            setNewLog({ name: "", text: "", price: 0, category_id: 0 });
             indexIncomeLog();
         } catch (error) {
             console.error(error);
@@ -151,6 +170,78 @@ const AdminIncomeList = () => {
             <h2 className="text-xl font-semibold leading-tight text-gray-800 underline mb-2">
                 収入
             </h2>
+            {/* カテゴリフォーム */}
+            <label className="">収入カテゴリ追加</label>
+            <form
+                onSubmit={storeIncomeCategory}
+                className="mb-4 flex items-center border-solid border-2 p-2"
+            >
+                <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="追加収入カテゴリを入力"
+                />
+                <button
+                    type="submit"
+                    className="bg-blue-800 text-white px-4 py-2 ml-2 rounded-md hover:bg-teal-300"
+                >
+                    追加
+                </button>
+            </form>
+            {/* ログフォーム */}
+            <label className="">収入追加</label>
+            <form
+                onSubmit={storeIncomeLog}
+                className="mb-4 flex flex-col gap-2 border-solid border-2 p-2"
+            >
+                <input
+                    type="text"
+                    value={newLog.name}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, name: e.target.value })
+                    }
+                    placeholder="収入名を入力"
+                />
+                <input
+                    type="text"
+                    value={newLog.text}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, text: e.target.value })
+                    }
+                    placeholder="収入説明を入力"
+                />
+                <input
+                    type="number"
+                    value={newLog.price ?? ""}
+                    onChange={(e) =>
+                        setNewLog({ ...newLog, price: e.target.value === "" ? null : Number(e.target.value) })
+                    }
+                    placeholder="金額を入力"
+                />
+                <select
+                    value={newLog.category_id}
+                    onChange={(e) =>
+                        setNewLog({
+                            ...newLog,
+                            category_id: Number(e.target.value),
+                        })
+                    }
+                >
+                    <option value="">カテゴリを選択</option>
+                    {categories.map((category) => (
+                        <option value={category.id} key={category.id}>
+                            {category.title}
+                        </option>
+                    ))}
+                </select>
+                <button
+                    type="submit"
+                    className="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-teal-300"
+                >
+                    追加
+                </button>
+            </form>
             {categories.map((category) => (
                 <div
                     key={category.id}
@@ -161,7 +252,7 @@ const AdminIncomeList = () => {
                         <span>
                             {/* カテゴリ削除 */}
                             <button
-                                className="bg-red-500 font-bold text-white mx-2 px-2 py-1 rounded-md"
+                                className="bg-red-500 font-bold text-white mx-2 px-2 py-1 rounded-md hover:bg-black"
                                 onClick={() =>
                                     deleteIncomeCategory(category.id)
                                 }
@@ -197,7 +288,7 @@ const AdminIncomeList = () => {
                                         </p>
                                         {/* ログ削除 */}
                                         <button
-                                            className="bg-red-500 text-white p-1 rounded-md"
+                                            className="bg-red-500 text-white p-1 rounded-md hover:bg-black"
                                             onClick={() =>
                                                 deleteIncomeLog(log.id)
                                             }
