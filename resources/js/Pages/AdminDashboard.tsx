@@ -1,6 +1,8 @@
 import AdminExList from "@/Expenditure/AdminExList";
 import ExList from "@/Expenditure/ExList";
+import ExTotal from "@/Expenditure/ExTotal";
 import AdminIncomeList from "@/income/AdminIncomeList";
+import IncomeTotal from "@/income/IncomeTotal";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
@@ -19,9 +21,10 @@ export default function AdminDashboard() {
                 <div className="py-12">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                            <AdminExList/>
-                            <AdminIncomeList/>
-
+                            <ExTotal />
+                            <IncomeTotal />
+                            <AdminExList />
+                            <AdminIncomeList />
                         </div>
                     </div>
                 </div>
