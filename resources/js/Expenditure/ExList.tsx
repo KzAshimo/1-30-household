@@ -14,6 +14,9 @@ type Logs = {
     user_id: number;
     category_id: number;
     created_at: Date;
+    users: {
+        name: string;
+    };
 };
 
 const ExList = () => {
@@ -97,6 +100,9 @@ const ExList = () => {
                                     className="bg-gray-200 p-4 rounded-lg shadow-sm"
                                 >
                                     <div className="flex justify-between items-center">
+                                        <p className="font-extrabold text-lg">
+                                            {log.users.name}
+                                        </p>
                                         <p className="text-gray-800 font-medium">
                                             {
                                                 new Date(log.created_at)

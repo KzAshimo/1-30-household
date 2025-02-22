@@ -14,7 +14,9 @@ class IncomeLogController extends Controller
      */
     public function index()
     {
-        return response()->json(IncomeLog::all(), 200);
+        $log = IncomeLog::with('users:id,name')->get();
+
+        return response()->json($log, 200);
     }
 
     /**
