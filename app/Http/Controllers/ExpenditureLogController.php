@@ -16,7 +16,9 @@ class ExpenditureLogController extends Controller
      */
     public function index()
     {
-        return response()->json(ExpenditureLog::all(), 200);
+        $log = ExpenditureLog::with('users:id,name')->get();
+
+        return response()->json($log, 200);
     }
 
     /**

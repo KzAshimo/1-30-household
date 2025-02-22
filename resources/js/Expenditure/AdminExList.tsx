@@ -15,6 +15,9 @@ type Logs = {
     user_id: number;
     category_id: number;
     created_at: Date;
+    users: {
+        name: string;
+    };
 };
 
 const AdminExList = () => {
@@ -32,6 +35,8 @@ const AdminExList = () => {
         price: null,
         category_id: 0,
     });
+    const [openAddCategory, setOpenAddCategory] = useState(false);
+    const [openAddLog, setOpenAddLog] = useState(false);
 
     const user = usePage().props.auth.user;
 
@@ -174,76 +179,100 @@ const AdminExList = () => {
             </h2>
             {/* カテゴリフォーム */}
             <label className="">支出カテゴリ追加</label>
-            <form
-                onSubmit={storeExCategory}
-                className="mb-4 flex items-center border-solid border-2 p-2"
+            <button
+                onClick={() => setOpenAddCategory(!openAddCategory)}
+                className="bg-gray-500 text-white px-2 py-1 rounded-md mb-2 mx-2"
             >
-                <input
-                    type="text"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="追加支出カテゴリを入力"
-                />
-                <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-teal-500"
+                {openAddCategory ? "close" : "Form open"}
+            </button>
+            {openAddCategory && (
+                <form
+                    onSubmit={storeExCategory}
+                    className="mb-4 flex items-center border-solid border-2 p-2"
                 >
-                    追加
-                </button>
-            </form>
+                    <input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        placeholder="追加支出カテゴリを入力"
+                    />
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 ml-2 rounded-md hover:bg-teal-500"
+                    >
+                        追加
+                    </button>
+                </form>
+            )}
+            <br />
             {/* ログフォーム */}
             <label className="">支出追加</label>
-            <form
-                onSubmit={storeExLog}
-                className="mb-4 flex flex-col gap-2 border-solid border-2 p-2"
+            <button
+                onClick={() => setOpenAddLog(!openAddLog)}
+                className="bg-gray-500 text-white px-2 py-1 rounded-md mb-2 mx-2"
             >
-                <input
-                    type="text"
-                    value={newLog.name}
-                    onChange={(e) =>
-                        setNewLog({ ...newLog, name: e.target.value })
-                    }
-                    placeholder="支出名を入力"
-                />
-                <input
-                    type="text"
-                    value={newLog.text}
-                    onChange={(e) =>
-                        setNewLog({ ...newLog, text: e.target.value })
-                    }
-                    placeholder="支出説明を入力"
-                />
-                <input
-                    type="number"
-                    value={newLog.price ?? ""}
-                    onChange={(e) =>
-                        setNewLog({ ...newLog, price: e.target.value === "" ? null : Number(e.target.value) })
-                    }
-                    placeholder="金額を入力"
-                />
-                <select
-                    value={newLog.category_id}
-                    onChange={(e) =>
-                        setNewLog({
-                            ...newLog,
-                            category_id: Number(e.target.value),
-                        })
-                    }
+                {openAddLog ? "close" : "Form open"}
+            </button>
+            {openAddLog && (
+                <form
+                    onSubmit={storeExLog}
+                    className="mb-4 flex flex-col gap-2 border-solid border-2 p-2"
                 >
-                    <option value="">カテゴリを選択</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.title}
-                        </option>
-                    ))}
-                </select>
-                <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-teal-500"
-                >
-                    追加
-                </button>
-            </form>
+                    <input
+                        type="text"
+                        value={newLog.name}
+                        onChange={(e) =>
+                            setNewLog({ ...newLog, name: e.target.value })
+                        }
+                        placeholder="支出名を入力"
+                    />
+                    <input
+                        type="text"
+                        value={newLog.text}
+                        onChange={(e) =>
+                            setNewLog({ ...newLog, text: e.target.value })
+                        }
+                        placeholder="支出説明を入力"
+                    />
+                    <input
+                        type="number"
+                        value={newLog.price ?? ""}
+                        onChange={(e) =>
+                            setNewLog({
+                                ...newLog,
+                                price:
+                                    e.target.value === ""
+                                        ? null
+                                        : Number(e.target.value),
+                            })
+                        }
+                        placeholder="金額を入力"
+                    />
+                    <select
+                        value={newLog.category_id}
+                        onChange={(e) =>
+                            setNewLog({
+                                ...newLog,
+                                category_id: Number(e.target.value),
+                            })
+                        }
+                    >
+                        <option value="">カテゴリを選択</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.title}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-teal-500"
+                    >
+                        追加
+                    </button>
+                </form>
+            )}
+
             {categories.map((category) => (
                 <div
                     key={category.id}
@@ -270,6 +299,9 @@ const AdminExList = () => {
                                     className="bg-gray-200 p-4 rounded-lg shadow-sm"
                                 >
                                     <div className="flex justify-between items-center">
+                                        <p className="font-extrabold text-lg">
+                                            {log.users.name}
+                                        </p>
                                         <p className="text-gray-800 font-medium">
                                             {
                                                 new Date(log.created_at)
