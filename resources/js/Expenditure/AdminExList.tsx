@@ -136,6 +136,9 @@ const AdminExList = () => {
     };
     const storeExLog = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log(newLog);
+        console.log(user.id);
+
         try {
             const response = await fetch("/api/ex-logs", {
                 method: "POST",
@@ -147,7 +150,7 @@ const AdminExList = () => {
             if (!response.ok) {
                 throw new Error("支出追加エラー");
             }
-            setNewLog({ name: "", text: "", price: 0, category_id: 0 });
+            setNewLog({ name: "", text: "", price: null, category_id: 0 });
             indexExLog();
         } catch (error) {
             console.error(error);

@@ -133,6 +133,8 @@ const AdminIncomeList = () => {
     };
     const storeIncomeLog = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log(newLog);
+        console.log(user.id);
         try {
             const response = await fetch("/api/in-logs", {
                 method: "POST",
@@ -144,7 +146,7 @@ const AdminIncomeList = () => {
             if (!response.ok) {
                 throw new Error("収入追加エラー");
             }
-            setNewLog({ name: "", text: "", price: 0, category_id: 0 });
+            setNewLog({ name: "", text: "", price: null, category_id: 0 });
             indexIncomeLog();
         } catch (error) {
             console.error(error);

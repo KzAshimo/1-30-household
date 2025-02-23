@@ -22,7 +22,11 @@ class IncomeCategoryController extends Controller
      */
     public function store(IncomeCategoryRequest $request)
     {
-        $category = IncomeCategory::create($request->validated());
+
+        $category = IncomeCategory::create([
+            'title' => $request->title,
+            'user_id' => $request->user_id,
+        ]);
         return response()->json($category, 201);
     }
 

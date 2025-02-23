@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\IncomeLog;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreIncomelogRequest;
-use App\Http\Requests\UpdateIncomelogRequest;
+use App\Http\Requests\StoreIncomeLogRequest;
+use App\Http\Requests\UpdateIncomeLogRequest;
 
 class IncomeLogController extends Controller
 {
@@ -22,10 +22,17 @@ class IncomeLogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreIncomelogRequest $request)
+    public function store(StoreIncomeLogRequest $request)
     {
-        $log = IncomeLog::create($request->validated());
-        return response()->json($log, 201);
+        $logs = IncomeLog::create([
+            'name' => $request['name'],
+            'text' => $request['text'],
+            'price' => $request['price'],
+            'category_id' => $request['category_id'],
+            'user_id' => $request['user_id'],
+        ]);
+
+        return response()->json($logs, 201);
     }
 
     /**
@@ -39,7 +46,7 @@ class IncomeLogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateIncomelogRequest $request, string $id)
+    public function update(UpdateIncomeLogRequest $request, string $id)
     {
         $log = IncomeLog::find($id);
         if(!$id){

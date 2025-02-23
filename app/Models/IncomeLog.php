@@ -10,7 +10,7 @@ class IncomeLog extends Model
     use HasFactory;
 
     protected $table = 'income_log';
-    protected $fillable = ['name','text','price','category_id'];
+    protected $fillable = ['name','text','price','category_id','user_id'];
 
     //ユーザとリレーション(子、複数)
     public function users()
@@ -21,6 +21,6 @@ class IncomeLog extends Model
     //カテゴリとリレーション(親)
     public function categories()
     {
-        return $this->hasMany(IncomeCategory::class,'category_log');
+        return $this->belongsTo(IncomeCategory::class,'category_log');
     }
 }
